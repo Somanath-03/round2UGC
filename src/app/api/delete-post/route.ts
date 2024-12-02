@@ -9,14 +9,39 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: 'Post ID is required' }, { status: 400 });
   }
 
-  const { data, error } = await supabase
+  // Fetch the post to get the file URL
+  const { data: post, error: fetchError } = await supabase
+    .from('Content')
+    .select('file_url')
+    .eq('id', id)
+    .single();
+
+  if (fetchError) {
+    return NextResponse.json({ error: fetchError.message }, { status: 500 });
+  }
+
+  // Delete the post from the database
+  const { data: deleteData, error: deleteError } = await supabase
     .from('Content')
     .delete()
     .eq('id', id);
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  if (deleteError) {
+    return NextResponse.json({ error: deleteError.message }, { status: 500 });
   }
 
-  return NextResponse.json({ message: 'Post deleted successfully', data });
+  // Delete the file from the storage bucket
+  const fileurl = post.file_url;
+  const filePath = fileurl.replace('https://ujbncvgdlulldcjkwcbk.supabase.co/storage/v1/object/public/ImgAndVid/', '');
+  console.log('Deleting file:', filePath);
+
+  const { error: storageError } = await supabase.storage
+    .from('ImgAndVid')
+    .remove([filePath]);
+
+  if (storageError) {
+    return NextResponse.json({ error: storageError.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ message: 'Post and file deleted successfully', data: deleteData });
 }

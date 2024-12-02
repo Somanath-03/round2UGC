@@ -13,6 +13,12 @@ import {
   MenuItem,
   Box,
   Modal,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Button,
 } from "@mui/material";
 import { red } from "@mui/material/colors";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -36,9 +42,15 @@ interface PostCardProps {
   handleExpandClick: (index: number) => void;
 }
 
-const PostCard: React.FC<PostCardProps> = ({ content }) => {
+const PostCard: React.FC<PostCardProps> = ({
+  content,
+  index,
+  expanded,
+  handleExpandClick,
+}) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
   const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -70,6 +82,7 @@ const PostCard: React.FC<PostCardProps> = ({ content }) => {
       console.log("Failed to delete post:", error);
     }
     handleMenuClose();
+    setDialogOpen(false);
   };
 
   const handleViewPost = () => {
@@ -90,6 +103,14 @@ const PostCard: React.FC<PostCardProps> = ({ content }) => {
 
   const handleModalClose = () => {
     setModalOpen(false);
+  };
+
+  const handleDialogOpen = () => {
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
   };
 
   return (
@@ -115,7 +136,7 @@ const PostCard: React.FC<PostCardProps> = ({ content }) => {
               }}
             >
               <MenuItem onClick={handleEditPost}>Edit Post</MenuItem>
-              <MenuItem onClick={handleDeletePost}>Delete Post</MenuItem>
+              <MenuItem onClick={handleDialogOpen}>Delete Post</MenuItem>
               <MenuItem onClick={handleViewPost}>View Post</MenuItem>
             </Menu>
           </>
@@ -233,6 +254,28 @@ const PostCard: React.FC<PostCardProps> = ({ content }) => {
           </Typography>
         </Box>
       </Modal>
+      <Dialog
+        open={dialogOpen}
+        onClose={handleDialogClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Delete Post"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this post? This action cannot be
+            undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleDeletePost} color="primary" autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Card>
   );
 };
