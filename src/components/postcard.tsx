@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardHeader,
@@ -26,6 +26,7 @@ import ShareIcon from "@mui/icons-material/Share";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Image from "next/image";
+import markdownToHtml from "@/utils/markdownToHtml";
 
 interface ContentInfo {
   id: number;
@@ -42,13 +43,18 @@ interface PostCardProps {
   handleExpandClick: (index: number) => void;
 }
 
-const PostCard: React.FC<PostCardProps> = ({
-  content,
-}) => {
+const PostCard: React.FC<PostCardProps> = ({ content }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
-
+  const [htmlDescription, setHtmlDescription] = useState<string>("");
+  useEffect(() => {
+    const convertMarkdownToHtml = async () => {
+      const html = await markdownToHtml(content.description);
+      setHtmlDescription(html);
+    };
+    convertMarkdownToHtml();
+  }, [content.description]);
   const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -111,12 +117,20 @@ const PostCard: React.FC<PostCardProps> = ({
   };
 
   return (
-    <Card key={content.id} className="mb-4 p-4">
+    <Card
+      key={content.id}
+      className="mb-4 p-4"
+      sx={{ bgcolor: "#230431", color: "white" }}
+    >
       <CardHeader
         avatar={<Avatar sx={{ bgcolor: red[500] }}>R</Avatar>}
         action={
           <>
-            <IconButton aria-label="settings" onClick={handleMenuClick}>
+            <IconButton
+              aria-label="settings"
+              onClick={handleMenuClick}
+              sx={{ color: "white" }}
+            >
               <MoreVertIcon />
             </IconButton>
             <Menu
@@ -138,8 +152,12 @@ const PostCard: React.FC<PostCardProps> = ({
             </Menu>
           </>
         }
-        title={content.title}
-        subheader={new Date(content.created_at).toLocaleDateString()}
+        title={<Typography sx={{ color: "white" }}>{content.title}</Typography>}
+        subheader={
+          <Typography sx={{ color: "white" }}>
+            {new Date(content.created_at).toLocaleDateString()}
+          </Typography>
+        }
       />
       {content.file_url.endsWith(".mp4") ? (
         <CardMedia
@@ -147,7 +165,9 @@ const PostCard: React.FC<PostCardProps> = ({
           controls
           autoPlay
           loop
+          muted
           src={content.file_url}
+          poster={`${content.file_url}#t=0.1`}
         />
       ) : (
         <CardMedia
@@ -157,21 +177,22 @@ const PostCard: React.FC<PostCardProps> = ({
         />
       )}
       <CardContent>
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant="body2" sx={{ color: "white" }}>
           {getTrimmedDescription(content.description)}
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
+        <IconButton aria-label="add to favorites" sx={{ color: "white" }}>
           <FavoriteIcon />
         </IconButton>
-        <IconButton aria-label="share">
+        <IconButton aria-label="share" sx={{ color: "white" }}>
           <ShareIcon />
         </IconButton>
         <IconButton
           onClick={handleModalOpen}
           aria-expanded={modalOpen}
           aria-label="show more"
+          sx={{ color: "white" }}
         >
           <ExpandMoreIcon />
         </IconButton>
@@ -190,7 +211,7 @@ const PostCard: React.FC<PostCardProps> = ({
             width: "60%",
             maxHeight: "90vh",
             overflow: "auto",
-            bgcolor: "background.paper",
+            bgcolor: "#17081f",
             borderRadius: 2,
             boxShadow: 24,
             p: 4,
@@ -202,7 +223,7 @@ const PostCard: React.FC<PostCardProps> = ({
             component="h2"
             sx={{
               mb: 3,
-              color: "black",
+              color: "white",
               fontWeight: "bold",
             }}
           >
@@ -231,13 +252,12 @@ const PostCard: React.FC<PostCardProps> = ({
           <Typography
             sx={{
               mt: 2,
-              color: "black",
+              color: "white",
               fontSize: "1.1rem",
               lineHeight: 1.6,
             }}
-          >
-            {content.description}
-          </Typography>
+            dangerouslySetInnerHTML={{ __html: htmlDescription }}
+          />
 
           <Typography
             variant="caption"
@@ -265,10 +285,10 @@ const PostCard: React.FC<PostCardProps> = ({
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDialogClose} color="primary">
+          <Button onClick={handleDialogClose} sx={{ color: "white" }}>
             Cancel
           </Button>
-          <Button onClick={handleDeletePost} color="primary" autoFocus>
+          <Button onClick={handleDeletePost} sx={{ color: "white" }} autoFocus>
             Delete
           </Button>
         </DialogActions>

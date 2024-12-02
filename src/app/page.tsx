@@ -52,7 +52,7 @@ function Home() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-r from-[#270338] to-black-400">
+    <div className="flex flex-col min-h-screen bg-[#17081f]">
       <div className="flex-grow flex">
         <div className="w-1/5 h-screen fixed left-0 top-0 overflow-y-hidden border-r-2 border-solid border-[#fccc4c]">
           <Navigation />

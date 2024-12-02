@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { Search, X } from "lucide-react";
+import Link from "next/link";
 
 interface ContentInfo {
   id: number;
@@ -38,15 +39,15 @@ const Display: React.FC<{ info: ContentInfo[] }> = ({ info }) => {
           </button>
         )}
       </div>
-      <div className="ml-4 text-white text-left text-2xl font-bold">
+      <div className="ml-4 text-white text-left">
         {filteredInfo.map((content) => (
-          <a
+          <Link
             key={content.id}
             href={`/view-post?id=${content.id}`}
-            className="block hover:underline"
+            className="flex items-center space-x-2 p-2 rounded-lg transition-colors hover:text-yellow-600"
           >
             {content.title}
-          </a>
+          </Link>
         ))}
       </div>
     </>

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import logo from "@/app/assets/logo.svg";
 import Image from "next/image";
 import Link from "next/link";
+import markdownToHtml from "@/utils/markdownToHtml";
 
 interface ContentInfo {
   id: number;
@@ -15,6 +16,7 @@ interface ContentInfo {
 const ViewPost: React.FC = () => {
   const [post, setPost] = useState<ContentInfo | null>(null);
   const [status, setStatus] = useState<string>("");
+  const [htmlDescription, setHtmlDescription] = useState<string>("");
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -26,7 +28,12 @@ const ViewPost: React.FC = () => {
           const response = await fetch(`/api/view-post?id=${id}`);
           if (response.ok) {
             const result = await response.json();
-            setPost(result.data);
+            const post = result.data;
+            setPost(post);
+
+            // Convert Markdown to HTML
+            const html = await markdownToHtml(post.description);
+            setHtmlDescription(html);
           } else {
             const errorResult = await response.json();
             console.error("Error fetching post:", errorResult.error);
@@ -43,12 +50,12 @@ const ViewPost: React.FC = () => {
   }, []);
 
   if (!post) {
-    return <div>Loading... {status}</div>;
+    return <div>Loading...</div>;
   }
 
   return (
     <div className="flex justify-center items-center h-full bg-gradient-to-r from-[#270338] to-black-400">
-      <div className="bg-white m-[5%] p-6 w-[80%] rounded-lg shadow-lg    ">
+      <div className="bg-white m-[5%] p-6 w-[80%] rounded-lg shadow-lg">
         <Link href="/" legacyBehavior>
           <a>
             <Image
@@ -73,7 +80,10 @@ const ViewPost: React.FC = () => {
             layout="responsive"
           />
         )}
-        <p className="text-black mb-4">{post.description}</p>
+        <div
+          className="text-black mb-4 mt-4"
+          dangerouslySetInnerHTML={{ __html: htmlDescription }}
+        />
         <div className="flex justify-end">
           <Link href="/" legacyBehavior>
             <a className="px-4 py-2 bg-yellow-300 text-black font-bold rounded">
