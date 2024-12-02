@@ -16,10 +16,10 @@ interface PostsProps {
 }
 
 const Posts: React.FC<PostsProps> = ({ info }) => {
-  const [expanded, setExpanded] = useState<number | false>(false);
+  const [modalOpen, setModalOpen] = useState<number | false>(false);
 
-  const handleExpandClick = (index: number) => {
-    setExpanded(expanded === index ? false : index);
+  const handleModalClick = (contentId: number) => {
+    setModalOpen(modalOpen === contentId ? false : contentId);
   };
 
   const onehalf = [];
@@ -52,8 +52,8 @@ const Posts: React.FC<PostsProps> = ({ info }) => {
               key={content.id}
               content={content}
               index={i}
-              expanded={expanded}
-              handleExpandClick={handleExpandClick}
+              expanded={modalOpen}
+              handleExpandClick={handleModalClick}
             />
           ))}
         </div>
@@ -63,8 +63,8 @@ const Posts: React.FC<PostsProps> = ({ info }) => {
               key={content.id}
               content={content}
               index={i}
-              expanded={expanded}
-              handleExpandClick={handleExpandClick}
+              expanded={modalOpen}
+              handleExpandClick={handleModalClick}
             />
           ))}
         </div>

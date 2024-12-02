@@ -6,18 +6,20 @@ import {
   CardMedia,
   CardContent,
   CardActions,
-  Collapse,
   Avatar,
   IconButton,
   Typography,
   Menu,
   MenuItem,
+  Box,
+  Modal,
 } from "@mui/material";
 import { red } from "@mui/material/colors";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShareIcon from "@mui/icons-material/Share";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import Image from "next/image";
 
 interface ContentInfo {
   id: number;
@@ -34,13 +36,9 @@ interface PostCardProps {
   handleExpandClick: (index: number) => void;
 }
 
-const PostCard: React.FC<PostCardProps> = ({
-  content,
-  index,
-  expanded,
-  handleExpandClick,
-}) => {
+const PostCard: React.FC<PostCardProps> = ({ content }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
 
   const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -84,6 +82,14 @@ const PostCard: React.FC<PostCardProps> = ({
       return description.substring(0, 100) + "...";
     }
     return description;
+  };
+
+  const handleModalOpen = () => {
+    setModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setModalOpen(false);
   };
 
   return (
@@ -145,21 +151,88 @@ const PostCard: React.FC<PostCardProps> = ({
           <ShareIcon />
         </IconButton>
         <IconButton
-          onClick={() => handleExpandClick(index)}
-          aria-expanded={expanded === index}
+          onClick={handleModalOpen}
+          aria-expanded={modalOpen}
           aria-label="show more"
         >
           <ExpandMoreIcon />
         </IconButton>
       </CardActions>
-      <Collapse in={expanded === index} timeout="auto" unmountOnExit>
-        <CardContent>
-          <Typography>Description:</Typography>
-          <Typography>
-            {content.description.length > 100 ? content.description : ""}
+      <Modal
+        open={modalOpen}
+        onClose={handleModalClose}
+        aria-labelledby="modal-title"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "60%",
+            maxHeight: "90vh",
+            overflow: "auto",
+            bgcolor: "background.paper",
+            borderRadius: 2,
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <Typography
+            id="modal-title"
+            variant="h4"
+            component="h2"
+            sx={{
+              mb: 3,
+              color: "black",
+              fontWeight: "bold",
+            }}
+          >
+            {content.title}
           </Typography>
-        </CardContent>
-      </Collapse>
+
+          <div className="relative w-full h-[400px] mb-4">
+            {content.file_url.endsWith(".mp4") ? (
+              <video
+                className="w-full h-full object-contain"
+                controls
+                src={content.file_url}
+                poster={`${content.file_url}#t=0.1`}
+              />
+            ) : (
+              <Image
+                src={content.file_url}
+                alt={content.title}
+                fill
+                className="object-contain"
+                sizes="80vw"
+              />
+            )}
+          </div>
+
+          <Typography
+            sx={{
+              mt: 2,
+              color: "black",
+              fontSize: "1.1rem",
+              lineHeight: 1.6,
+            }}
+          >
+            {content.description}
+          </Typography>
+
+          <Typography
+            variant="caption"
+            display="block"
+            sx={{
+              mt: 3,
+              color: "gray",
+            }}
+          >
+            Posted on: {new Date(content.created_at).toLocaleDateString()}
+          </Typography>
+        </Box>
+      </Modal>
     </Card>
   );
 };
