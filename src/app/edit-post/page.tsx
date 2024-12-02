@@ -51,38 +51,19 @@ const EditPost: React.FC = () => {
 
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get("id");
-    let fileUrl = initialFileUrl;
 
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("description", description);
     if (file) {
-      const formData = new FormData();
       formData.append("file", file);
-
-      const uploadResponse = await fetch("/api/upload-file", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (uploadResponse.ok) {
-        const uploadResult = await uploadResponse.json();
-        fileUrl = uploadResult.file_url;
-      } else {
-        const uploadErrorResult = await uploadResponse.json();
-        console.error("Error uploading file:", uploadErrorResult.error);
-        setStatus("Error uploading file.");
-        return;
-      }
+    } else {
+      formData.append("file_url", initialFileUrl);
     }
 
     const response = await fetch(`/api/edit-post?id=${id}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        title,
-        description,
-        file_url: fileUrl,
-      }),
+      body: formData,
     });
 
     if (response.ok) {
