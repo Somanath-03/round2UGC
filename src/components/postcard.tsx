@@ -44,9 +44,6 @@ interface PostCardProps {
 
 const PostCard: React.FC<PostCardProps> = ({
   content,
-  index,
-  expanded,
-  handleExpandClick,
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
