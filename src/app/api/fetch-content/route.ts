@@ -1,14 +1,6 @@
 import { supabase } from '@/utils/supabaseClient';
 import { NextResponse } from 'next/server';
 
-interface ContentInfo {
-  id: number;
-  title: string;
-  description: string;
-  file_url: string;
-  created_at: string;
-}
-
 export async function GET() {
   try {
     const { data, error } = await supabase

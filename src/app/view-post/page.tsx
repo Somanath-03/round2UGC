@@ -43,7 +43,7 @@ const ViewPost: React.FC = () => {
   }, []);
 
   if (!post) {
-    return <div>Loading...</div>;
+    return <div>Loading... {status}</div>;
   }
 
   return (
