@@ -23,7 +23,7 @@ const Display: React.FC<{ info: ContentInfo[] }> = ({ info }) => {
 
   return (
     <>
-      <div className="flex items-center border border-gray-300 rounded-md p-2 mt-20 m-3 overflow-hidden">
+      <div className="flex items-center border border-gray-300 rounded-md p-2 mt-20 m-3">
         <Search className="mr-2" />
         <input
           type="text"
@@ -40,7 +40,11 @@ const Display: React.FC<{ info: ContentInfo[] }> = ({ info }) => {
       </div>
       <div className="ml-4 text-white text-left text-2xl font-bold">
         {filteredInfo.map((content) => (
-          <a key={content.id} href="#" className="block hover:underline">
+          <a
+            key={content.id}
+            href={`/view-post?id=${content.id}`}
+            className="block hover:underline"
+          >
             {content.title}
           </a>
         ))}

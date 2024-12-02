@@ -1,14 +1,42 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import logo from "@/app/assets/logo.svg";
 import Image from "next/image";
 import Link from "next/link";
 
-const NewPost: React.FC = () => {
+const EditPost: React.FC = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [status, setStatus] = useState<string>("");
+  const [initialFileUrl, setInitialFileUrl] = useState<string>("");
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get("id");
+
+    if (id) {
+      const fetchPost = async () => {
+        try {
+          const response = await fetch(`/api/view-post?id=${id}`);
+          if (response.ok) {
+            const result = await response.json();
+            const post = result.data;
+            setTitle(post.title);
+            setDescription(post.description);
+            setInitialFileUrl(post.file_url);
+          } else {
+            const errorResult = await response.json();
+            console.error("Error fetching post:", errorResult.error);
+          }
+        } catch (error) {
+          console.error("Failed to fetch post:", error);
+        }
+      };
+
+      fetchPost();
+    }
+  }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -18,32 +46,54 @@ const NewPost: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus("Submitting new post...");
-    console.log("New post submitted:", { title, description, file });
+    setStatus("Updating post...");
+    console.log("Post update submitted:", { title, description, file });
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get("id");
+    let fileUrl = initialFileUrl;
 
     if (file) {
       const formData = new FormData();
-      formData.append("title", title);
-      formData.append("description", description);
       formData.append("file", file);
 
-      const response = await fetch("/api/upload-content", {
+      const uploadResponse = await fetch("/api/upload-file", {
         method: "POST",
         body: formData,
       });
 
-      if (response.ok) {
-        const result = await response.json();
-        console.log("New post inserted:", result.data);
-        setStatus("New post created successfully.");
-        window.location.href = "/";
+      if (uploadResponse.ok) {
+        const uploadResult = await uploadResponse.json();
+        fileUrl = uploadResult.file_url;
       } else {
-        const errorResult = await response.json();
-        console.error("Error inserting new post:", errorResult.error);
-        setStatus("Error inserting new post.");
+        const uploadErrorResult = await uploadResponse.json();
+        console.error("Error uploading file:", uploadErrorResult.error);
+        setStatus("Error uploading file.");
+        return;
       }
+    }
+
+    const response = await fetch(`/api/edit-post?id=${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title,
+        description,
+        file_url: fileUrl,
+      }),
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      console.log("Post updated successfully:", result.data);
+      setStatus("Post updated successfully.");
+      window.location.href = "/";
     } else {
-      setStatus("Please select a file to upload.");
+      const errorResult = await response.json();
+      console.error("Error updating post:", errorResult.error);
+      setStatus("Error updating post.");
     }
   };
 
@@ -61,7 +111,7 @@ const NewPost: React.FC = () => {
             />
           </a>
         </Link>
-        <h2 className="text-2xl mb-4 text-black">New Post</h2>
+        <h2 className="text-2xl mb-4 text-black">Edit Post</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-gray-700">Title</label>
@@ -91,6 +141,18 @@ const NewPost: React.FC = () => {
               className="w-full p-2 border border-gray-300 text-black rounded mt-1"
               onChange={handleFileChange}
             />
+            {initialFileUrl && !file && (
+              <div className="mt-2">
+                <a
+                  href={initialFileUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 underline"
+                >
+                  View current file
+                </a>
+              </div>
+            )}
           </div>
           <div className="flex justify-end">
             <button
@@ -104,7 +166,7 @@ const NewPost: React.FC = () => {
               type="submit"
               className="px-4 py-2 bg-yellow-300 text-black font-bold rounded"
             >
-              Submit
+              Update
             </button>
           </div>
         </form>
@@ -118,4 +180,4 @@ const NewPost: React.FC = () => {
   );
 };
 
-export default NewPost;
+export default EditPost;

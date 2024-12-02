@@ -4,8 +4,8 @@ import Navigation from "@/components/navigation";
 import Posts from "@/components/posts";
 import Display from "@/components/display";
 import Footer from "@/components/Footer";
-import { supabase } from "@/utils/supabaseClient";
 import { CirclePlus } from "lucide-react";
+
 
 interface ContentInfo {
   id: number;
@@ -15,23 +15,19 @@ interface ContentInfo {
   created_at: string;
 }
 
-function fetchData(
+const fetchData = async (
   setData: React.Dispatch<React.SetStateAction<ContentInfo[] | null>>,
   setLoading: React.Dispatch<React.SetStateAction<boolean>>
-) {
-  supabase
-    .from("Content")
-    .select("*")
-    .order("created_at", { ascending: false })
-    .then(({ data, error }) => {
-      if (error) {
-        console.error(error);
-      } else {
-        setData(data);
-      }
-      setLoading(false);
-    });
-}
+) => {
+  const response = await fetch("/api/fetch-content");
+  const result = await response.json();
+  if (response.ok) {
+    setData(result.data);
+  } else {
+    console.error(result.error);
+  }
+  setLoading(false);
+};
 
 function Home() {
   const [data, setData] = useState<ContentInfo[] | null>(null);
@@ -47,6 +43,10 @@ function Home() {
     return () => clearInterval(interval); // Cleanup interval on component unmount
   }, []);
 
+  const newpost = () => {
+    window.location.href = "/new-post"; // Redirect to the new post page
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -54,22 +54,18 @@ function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-r from-[#270338] to-black-400">
       <div className="flex-grow flex">
-        <div className="w-1/5 h-screen fixed left-0 top-0 overflow-hidden border-r-2 border-solid border-[#fccc4c]">
+        <div className="w-1/5 h-screen fixed left-0 top-0 overflow-y-hidden border-r-2 border-solid border-[#fccc4c]">
           <Navigation />
         </div>
         <button
-          onClick={() => (window.location.href = "./new-post")}
+          onClick={(newpost)}
           className="ml-2 p-2 top-8 right-[21%] bg-yellow-300 text-black font-bold rounded-lg fixed flex items-center"
         >
           <CirclePlus className="mr-2" />
           NEW POST
         </button>
         <main className="w-3/5 h-full ml-[20%] mt-[5%] mx-auto">
-          {!data || data.length === 0 ? (
-            <div className="h-screen w-full">No Posts...</div>
-          ) : (
-            <Posts info={data || []} />
-          )}
+          <Posts info={data || []} />
         </main>
         <div className="w-1/5 h-screen border-l-2 border-solid border-[#fccc4c] fixed right-0 top-0 overflow-y-hidden">
           <Display info={data || []} />
