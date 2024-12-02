@@ -1,3 +1,5 @@
+// sends the ordered data back to requested website
+
 import { supabase } from '@/utils/supabaseClient';
 import { NextResponse } from 'next/server';
 

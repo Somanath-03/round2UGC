@@ -1,3 +1,11 @@
+// input = id from the request
+// returns a response of the deleted post and file i.e status code
+
+// delete the post from the database
+// delete files and records from the database and storage bucket
+
+// used by delete-post option from the posts more options
+
 import { NextResponse } from 'next/server';
 import { supabase } from '@/utils/supabaseClient';
 

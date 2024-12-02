@@ -1,3 +1,6 @@
+// this it to view content on another page
+// i have added react-markdown to convert the markdown to html
+
 "use client";
 import React, { useEffect, useState } from "react";
 import logo from "@/app/assets/logo.svg";

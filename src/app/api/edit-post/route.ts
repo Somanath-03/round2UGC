@@ -1,3 +1,9 @@
+// input data is sent from the client side to the api i.e all fields
+// this validates and request data for the post to be updated
+// returns a response of the updated post i.e status code
+
+// used by edit-post option from the edit-posts page
+
 import { NextResponse } from 'next/server';
 import { supabase } from '@/utils/supabaseClient';
 

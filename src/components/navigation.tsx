@@ -1,3 +1,5 @@
+// Navigation component on the left hand side of the website
+
 import Link from "next/link";
 import {
   Home,

@@ -1,3 +1,8 @@
+// This file is used to upload content to the Supabase storage and database
+// it uploads first to the storage and then the url to the database
+
+// It is used by the new-post page to upload a new post
+
 import { supabase } from '@/utils/supabaseClient';
 import { NextResponse } from 'next/server';
 

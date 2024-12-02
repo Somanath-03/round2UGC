@@ -1,3 +1,5 @@
+// used to filter content and data is recieved from the top layer instead of api calls
+
 "use client";
 import React, { useState } from "react";
 import { Search, X } from "lucide-react";

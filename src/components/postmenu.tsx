@@ -1,3 +1,4 @@
+// the menu for the options of the post card in the home page
 "use client";
 import React from "react";
 import { Menu, MenuItem } from "@mui/material";

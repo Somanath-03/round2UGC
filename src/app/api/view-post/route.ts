@@ -1,3 +1,6 @@
+// this is used to get a info on a particular id from the database
+// used by the view-post page to get the post info
+
 import { NextResponse } from 'next/server';
 import { supabase } from '@/utils/supabaseClient';
 

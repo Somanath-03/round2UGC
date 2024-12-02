@@ -1,3 +1,7 @@
+// this is for creating a new post 
+// which data is recorded and sent to the upload content api
+
+
 "use client";
 import React, { useState } from "react";
 import logo from "@/app/assets/logo.svg";

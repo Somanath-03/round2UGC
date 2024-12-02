@@ -1,3 +1,7 @@
+// main component of grid layout of the website it is used to display the posts
+// it is a single post card with input prop as content
+
+
 "use client";
 import React, { useState, useEffect } from "react";
 import {
@@ -285,10 +289,10 @@ const PostCard: React.FC<PostCardProps> = ({ content }) => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDialogClose} sx={{ color: "white" }}>
+          <Button onClick={handleDialogClose} sx={{ color: "green" }}>
             Cancel
           </Button>
-          <Button onClick={handleDeletePost} sx={{ color: "white" }} autoFocus>
+          <Button onClick={handleDeletePost} sx={{ color: "red" }} autoFocus>
             Delete
           </Button>
         </DialogActions>

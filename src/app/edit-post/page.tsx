@@ -1,3 +1,8 @@
+// gets the post id from posts when more options is clicked
+// then gets the content of the post from api view-post
+// then displays the content of the post
+// then the user can choose to edit and then the content is sent to the edit-post api
+
 "use client";
 import React, { useEffect, useState } from "react";
 import logo from "@/app/assets/logo.svg";

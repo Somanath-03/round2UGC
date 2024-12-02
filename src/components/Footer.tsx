@@ -1,3 +1,5 @@
+// footer component from the website 
+
 import React from "react";
 import Link from "next/link";
 import Logo from "@/app/assets/logo.svg";
