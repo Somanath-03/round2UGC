@@ -1,4 +1,4 @@
-# UGC
+# UGC Cline - a chat app
 
 A **Next.js + TypeScript** content-sharing app with real-time CRUD operations, powered by Supabase and styled with Tailwind CSS.
 
@@ -65,7 +65,6 @@ A **Next.js + TypeScript** content-sharing app with real-time CRUD operations, p
    git clone https://github.com/Somanath-03/round2UGC.git
    cd round2UGC
    npm install
-````
 
 2. **Configure Environment**
    Create a `.env.local` in project root with:
@@ -115,5 +114,4 @@ A **Next.js + TypeScript** content-sharing app with real-time CRUD operations, p
 ├── tailwind.config.ts  
 ├── next.config.ts  
 └── package.json
-```
 ```
