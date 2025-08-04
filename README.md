@@ -1,4 +1,4 @@
-# UGC Cline - a chat app
+# UGC Clone - a chat app
 
 A **Next.js + TypeScript** content-sharing app with real-time CRUD operations, powered by Supabase and styled with Tailwind CSS.
 
