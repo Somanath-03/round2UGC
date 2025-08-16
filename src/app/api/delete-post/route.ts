@@ -46,7 +46,11 @@ export async function DELETE(request: Request) {
   const fileurl = post.file_url;
   let filePath: string;
   try {
-    filePath = new URL(fileurl).pathname.replace('/storage/v1/object/public/ImgAndVid/', '');
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    filePath = new URL(fileurl).pathname.replace('/storage/v1/object/public/ImgAndVid/', ''); // fallback
+    if (supabaseUrl) {
+      filePath = fileurl.replace(new RegExp(`^https?://[^/]+/storage/v1/object/public/ImgAndVid/`), '');
+    }
   } catch {
     // Fallback: strip any host with a regex
     filePath = fileurl.replace(/^https?:\/\/[^/]+\/storage\/v1\/object\/public\/ImgAndVid\//, '');

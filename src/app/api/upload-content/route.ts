@@ -4,21 +4,22 @@
 // It is used by the new-post page to upload a new post
 
 import { supabase } from '@/utils/supabaseClient';
+import { normalizeStorageUrl } from '@/utils/normalizeStorageUrl';
 import { NextResponse } from 'next/server';
 
 
 export async function POST(request: Request) {
   try {
-    const formData = await request.formData();
-    const title = formData.get("title") as string;
-    const description = formData.get("description") as string;
-    const file = formData.get("file") as File;
+  const formData = await request.formData();
+  const title = formData.get("title") as string;
+  const description = formData.get("description") as string;
+  const file = formData.get("file") as File;
 
     if (!file) {
       return NextResponse.json({ error: "File is required" }, { status: 400 });
     }
 
-    const { data: uploadData, error: uploadError } = await supabase.storage
+  const { data: uploaded, error: uploadError } = await supabase.storage
       .from("ImgAndVid")
       .upload(`public/${file.name}`, file);
 
@@ -27,11 +28,21 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: uploadError.message }, { status: 500 });
     }
 
-    const filePath = uploadData.path;
+    if (!uploaded?.path) {
+      return NextResponse.json({ error: "Upload did not return a path" }, { status: 500 });
+    }
 
-    const { data: publicData } = supabase.storage
+    const { data: publicUrlData } = supabase.storage
       .from("ImgAndVid")
-      .getPublicUrl(filePath);
+      .getPublicUrl(uploaded.path);
+
+    const publicUrl = normalizeStorageUrl(publicUrlData.publicUrl);
+
+    const { data, error } = await supabase
+      .from('Content')
+      .insert({ title, description, file_url: publicUrl })
+      .select()
+      .single();
 
     if (error) {
       console.error("Error inserting new post:", error);

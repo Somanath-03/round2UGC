@@ -6,6 +6,7 @@
 
 import { NextResponse } from 'next/server';
 import { supabase } from '@/utils/supabaseClient';
+import { normalizeStorageUrl } from '@/utils/normalizeStorageUrl';
 
 export async function PUT(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -27,7 +28,7 @@ export async function PUT(request: Request) {
   let fileUrl = formData.get('file_url') as string;
 
   if (file) {
-    const { data: uploadData, error: uploadError } = await supabase.storage
+  const { data: uploaded, error: uploadError } = await supabase.storage
       .from('ImgAndVid')
       .upload(`public/${file.name}`, file);
 
@@ -35,7 +36,13 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: uploadError.message }, { status: 500 });
     }
 
-    fileUrl = publicData.publicUrl;
+    if (!uploaded?.path) {
+      return NextResponse.json({ error: 'Upload did not return a path' }, { status: 500 });
+    }
+    const { data: publicUrlData } = supabase.storage
+      .from('ImgAndVid')
+      .getPublicUrl(uploaded.path);
+    fileUrl = normalizeStorageUrl(publicUrlData.publicUrl);
   }
 
   const { data, error } = await supabase

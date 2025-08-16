@@ -3,6 +3,7 @@
 
 import { NextResponse } from 'next/server';
 import { supabase } from '@/utils/supabaseClient';
+import { normalizeStorageUrl } from '@/utils/normalizeStorageUrl';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -22,5 +23,6 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ data });
+  const normalized = { ...data, file_url: normalizeStorageUrl(data.file_url) };
+  return NextResponse.json({ data: normalized });
 }
