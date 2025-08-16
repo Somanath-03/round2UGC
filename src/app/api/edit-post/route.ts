@@ -35,7 +35,7 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: uploadError.message }, { status: 500 });
     }
 
-    fileUrl = `https://ujbncvgdlulldcjkwcbk.supabase.co/storage/v1/object/public/ImgAndVid/${uploadData.path}`;
+    fileUrl = publicData.publicUrl;
   }
 
   const { data, error } = await supabase
