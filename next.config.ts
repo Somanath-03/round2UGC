@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 const envUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseHostname = envUrl ? new URL(envUrl).hostname : "";
 
 
 const nextConfig: NextConfig = {
@@ -7,7 +8,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: envUrl,
+        hostname: supabaseHostname,
         port: '',
       },
     ],
