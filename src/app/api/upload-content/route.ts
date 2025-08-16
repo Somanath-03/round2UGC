@@ -6,6 +6,7 @@
 import { supabase } from '@/utils/supabaseClient';
 import { NextResponse } from 'next/server';
 
+
 export async function POST(request: Request) {
   try {
     const formData = await request.formData();
@@ -28,13 +29,9 @@ export async function POST(request: Request) {
 
     const filePath = uploadData.path;
 
-    const { data, error } = await supabase.from("Content").insert([
-      {
-        title,
-        description,
-        file_url: `https://ujbncvgdlulldcjkwcbk.supabase.co/storage/v1/object/public/ImgAndVid/${filePath}`,
-      },
-    ]);
+    const { data: publicData } = supabase.storage
+      .from("ImgAndVid")
+      .getPublicUrl(filePath);
 
     if (error) {
       console.error("Error inserting new post:", error);
