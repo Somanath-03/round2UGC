@@ -16,7 +16,7 @@ import Image from "next/image";
 
 function Navigation() {
   return (
-    <div className="mt-5 w-64 h-full space-y-6 p-4 ">
+  <div className="mt-5 w-full md:w-64 h-full space-y-6 p-4">
       <div className="flex items-center space-x-2">
         <Link href="/" className="flex-shrink-0">
           <Image src={Logo} alt="Logo" className="w-56 h-30 my-0" />

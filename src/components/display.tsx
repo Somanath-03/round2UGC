@@ -26,7 +26,7 @@ const Display: React.FC<{ info: ContentInfo[] }> = ({ info }) => {
 
   return (
     <>
-      <div className="flex items-center border border-gray-300 rounded-md p-2 mt-20 m-3">
+      <div className="flex items-center border border-gray-300 rounded-md p-2 mt-4 md:mt-20 m-3">
         <Search className="mr-2" />
         <input
           type="text"
@@ -41,12 +41,12 @@ const Display: React.FC<{ info: ContentInfo[] }> = ({ info }) => {
           </button>
         )}
       </div>
-      <div className="ml-4 text-white text-left">
+      <div className="px-3 md:ml-4 text-white text-left space-y-2">
         {filteredInfo.map((content) => (
           <Link
             key={content.id}
             href={`/view-post?id=${content.id}`}
-            className="flex items-center space-x-2 p-2 rounded-lg transition-colors hover:text-yellow-600"
+            className="flex items-center space-x-2 p-2 rounded-lg transition-colors hover:text-yellow-600 break-words"
           >
             {content.title}
           </Link>
