@@ -9,6 +9,9 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/utils/supabaseClient';
 
+const envUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+
+
 export async function DELETE(request: Request) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');
@@ -38,9 +41,17 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: deleteError.message }, { status: 500 });
   }
 
+  
+
   // Delete the file from the storage bucket
   const fileurl = post.file_url;
-  const filePath = fileurl.replace('https://ujbncvgdlulldcjkwcbk.supabase.co/storage/v1/object/public/ImgAndVid/', '');
+  let filePath: string;
+  try {
+    filePath = new URL(fileurl).pathname.replace('/storage/v1/object/public/ImgAndVid/', '');
+  } catch {
+    // Fallback: strip any host with a regex
+    filePath = fileurl.replace(/^https?:\/\/[^/]+\/storage\/v1\/object\/public\/ImgAndVid\//, '');
+  }
   console.log('Deleting file:', filePath);
 
   const { error: storageError } = await supabase.storage
