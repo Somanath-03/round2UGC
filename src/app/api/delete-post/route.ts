@@ -9,7 +9,6 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/utils/supabaseClient';
 
-const envUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 
 
 export async function DELETE(request: Request) {
